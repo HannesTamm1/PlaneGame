@@ -3,12 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - danger
+  - 'waypoint '
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Waypoint
   - Water
   - UI
   - 

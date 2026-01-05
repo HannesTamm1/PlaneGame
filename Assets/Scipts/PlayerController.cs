@@ -1,64 +1,78 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour
+{
+    [Header("Score")]
+    public TMP_Text scoreText;
+    public int score;
 
-  	    public float FlySpeed = 5;
-   	    public float YawAmount = 120;
-   	    public int score;
-    public AudioSource Waypoint;
-    public TMP_Text ScoreText; 
+    [Header("Movement")]
+    public float flySpeed = 5f;
+    public float yawAmount = 120f;
 
-    private float Yaw;
+    [Header("Audio")]
+    public AudioSource waypointAudio;
+
+    private float yaw;
 
     void Start()
     {
-        global::System.Object value = ScoreText.GetComponent<TMP_Text>(); 
-        ScoreText.text = "" + score;
+        UpdateScoreUI();
     }
 
+    void Update()
+    {
+        // Move forward
+        transform.position += transform.forward * flySpeed * Time.deltaTime;
 
-
-    // Update is called once per frame
-    void Update() {
-
-        // move forward
-        transform.position += transform.forward * FlySpeed * Time.deltaTime;
-
-        // inputs
+        // Input
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        // yaw, pitch, roll
-        Yaw += horizontalInput * YawAmount * Time.deltaTime;
-        float pitch = Mathf.Lerp(0, 90, Mathf.Abs(verticalInput)) * Mathf.Sign(verticalInput);
-        float roll = Mathf.Lerp(0, 20, Mathf.Abs(horizontalInput)) * -Mathf.Sign(horizontalInput);
+        // Rotation calculations
+        yaw += horizontalInput * yawAmount * Time.deltaTime;
+        float pitch = Mathf.Lerp(0f, 90f, Mathf.Abs(verticalInput)) * Mathf.Sign(verticalInput);
+        float roll = Mathf.Lerp(0f, 20f, Mathf.Abs(horizontalInput)) * -Mathf.Sign(horizontalInput);
 
-        // apply rotation
-        transform.localRotation = Quaternion.Euler(Vector3.up * Yaw + Vector3.right * pitch + Vector3.forward * roll);
+        // Apply rotation
+        transform.localRotation = Quaternion.Euler(
+            Vector3.up * yaw +
+            Vector3.right * pitch +
+            Vector3.forward * roll
+        );
     }
 
     private void OnTriggerEnter(Collider other)
+{
+    if (other.gameObject.layer == LayerMask.NameToLayer("Waypoint"))
     {
-        if (other.gameObject.tag == "waypoint")
+        Destroy(other.gameObject, 0.1f);
+
+        if (waypointAudio != null)
+            waypointAudio.Play();
+
+        score++;
+        UpdateScoreUI();
+
+        if (score == 5)
         {
-            Destroy(other.gameObject, 0.1f); //destroys the waypoint in 0.1 second
-            Waypoint.Play(); //plays the sound effect
-            score++; //updates the score system by adding 1
-            ScoreText.text = "" + score; //updates the HUD
-
-	if (score == 5)
-	{
-	   Application.LoadLevel("level2");
-	}
-
+            SceneManager.LoadScene("level2");
         }
+    }
+    else if (other.gameObject.layer == LayerMask.NameToLayer("Danger"))
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+}
 
-        if (other.gameObject.tag == "danger")
-        {
-            Application.LoadLevel(Application.loadedLevel);
-        }
+
+    private void UpdateScoreUI()
+    {
+        if (scoreText != null)
+            scoreText.text = score.ToString();
+        else
+            Debug.LogWarning("ScoreText is not assigned in the Inspector.");
     }
 }
