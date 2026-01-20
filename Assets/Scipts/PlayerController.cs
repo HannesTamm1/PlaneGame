@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
         score++;
         UpdateScoreUI();
 
-        if (score == 20)
+        if (score == 10)
         {
             SceneManager.LoadScene("level2");
         }
