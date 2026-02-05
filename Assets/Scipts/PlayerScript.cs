@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 
-public class Level2PlayerController : MonoBehaviour
+public class PlayerScript : MonoBehaviour
 {
     [Header("Score")]
     public TMP_Text scoreText;
@@ -55,11 +55,6 @@ public class Level2PlayerController : MonoBehaviour
 
         score++;
         UpdateScoreUI();
-
-        if (score == 10)
-        {
-            SceneManager.LoadScene("level2");
-        }
     }
     else if (other.gameObject.layer == LayerMask.NameToLayer("Danger"))
     {
