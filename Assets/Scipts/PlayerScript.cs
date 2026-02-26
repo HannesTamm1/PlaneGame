@@ -15,12 +15,8 @@ public class PlayerScript : MonoBehaviour
     [Header("Audio")]
     public AudioSource waypointAudio;
 
-    [Header("Win UI")]
-    public GameObject levelCompleteUI;
-    public string level1SceneName = "level1";
-
     private float yaw;
-    private bool levelFinished;
+
 
     void Start()
     {
@@ -29,8 +25,6 @@ public class PlayerScript : MonoBehaviour
 
     void Update()
     {
-        if (levelFinished)
-            return;
 
         // Move forward
         transform.position += transform.forward * flySpeed * Time.deltaTime;
@@ -54,8 +48,6 @@ public class PlayerScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
 {
-    if (levelFinished)
-        return;
 
     if (other.gameObject.layer == LayerMask.NameToLayer("Waypoint"))
     {
@@ -67,12 +59,6 @@ public class PlayerScript : MonoBehaviour
         score++;
         UpdateScoreUI();
 
-        if (score == 7)
-        {
-            levelFinished = true;
-            if (levelCompleteUI != null)
-                levelCompleteUI.SetActive(true);
-        }
     }
     else if (other.gameObject.layer == LayerMask.NameToLayer("Danger"))
     {
@@ -80,10 +66,6 @@ public class PlayerScript : MonoBehaviour
     }
 }
 
-    public void ResetToLevel1()
-    {
-        SceneManager.LoadScene(level1SceneName);
-    }
 
     private void UpdateScoreUI()
     {
