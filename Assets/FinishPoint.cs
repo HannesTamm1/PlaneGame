@@ -3,26 +3,33 @@ using UnityEngine.SceneManagement;
 
 public class FinishPoint : MonoBehaviour
 {
-    public GameObject finishPanel;   // Assign in Inspector
-    public string nextLevelName = "Level2";
+    public GameObject finishPanel;
     public string homeSceneName = "MainMenu";
+
+    private bool levelCompleted = false;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !levelCompleted)
         {
+            levelCompleted = true;
+
             UnlockNewLevel();
-            finishPanel.SetActive(true);   // Show Congratulations UI
-            Time.timeScale = 0f;           // Pause game
+
+            finishPanel.SetActive(true);
+            Time.timeScale = 0f;
         }
     }
 
     void UnlockNewLevel()
     {
-        if (SceneManager.GetActiveScene().buildIndex <= PlayerPrefs.GetInt("ReachedIndex"))
+        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        int reachedIndex = PlayerPrefs.GetInt("ReachedIndex", 1);
+
+        if (currentIndex >= reachedIndex)
         {
-            PlayerPrefs.SetInt("ReachedIndex", SceneManager.GetActiveScene().buildIndex + 1);
-            PlayerPrefs.SetInt("UnlockedLevel", PlayerPrefs.GetInt("UnlockedLevel", 1) + 1);
+            PlayerPrefs.SetInt("ReachedIndex", currentIndex + 1);
+            PlayerPrefs.SetInt("UnlockedLevel", currentIndex + 1);
             PlayerPrefs.Save();
         }
     }
@@ -30,7 +37,7 @@ public class FinishPoint : MonoBehaviour
     public void LoadNextLevel()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(nextLevelName);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public void LoadHome()

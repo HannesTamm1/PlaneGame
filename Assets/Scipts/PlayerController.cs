@@ -15,12 +15,10 @@ public class PlayerController : MonoBehaviour
     [Header("Audio")]
     public AudioSource waypointAudio;
 
-    [Header("Level Complete UI")]
-    public GameObject level1CompleteUI;
-    public string level2SceneName = "level2";
+
 
     private float yaw;
-    private bool levelFinished;
+
 
     void Start()
     {
@@ -29,8 +27,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (levelFinished)
-            return;
+
 
         // Move forward
         transform.position += transform.forward * flySpeed * Time.deltaTime;
@@ -63,25 +60,13 @@ public class PlayerController : MonoBehaviour
 
         score++;
         UpdateScoreUI();
-
-        if (score == 10 && !levelFinished)
-        {
-            levelFinished = true;
-            if (level1CompleteUI != null)
-                level1CompleteUI.SetActive(true);
-        }
     }
     else if (other.gameObject.layer == LayerMask.NameToLayer("Danger"))
     {
-        if (!levelFinished)
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
 
-    public void ContinueToLevel2()
-    {
-        SceneManager.LoadScene(level2SceneName);
-    }
 
     private void UpdateScoreUI()
     {
