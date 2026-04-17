@@ -73,6 +73,17 @@ mono_crash.*
 *.unitypackage.meta
 *.app
 
+# OS-generated clutter
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Rich-text and office docs that should not ship in the repo
+*.rtf
+*.doc
+*.docx
+*.pages
+
 # Crashlytics generated file
 crashlytics-build.properties
 
